@@ -1,0 +1,67 @@
+PUT  log_consultas
+
+{ 
+"@timestamp":"2010-05-15T22:00:54", 
+"estado_consulta":"consumo", 
+"servicio":"consulta", 
+"administrador":"Juan Carlos",
+ "consultas_realizadas":52 
+}
+
+
+PUT _template/log_consultas
+
+{ 
+    "index_patterns": "log_consultas",
+    "settings": {
+    "number_of_shards": 1, 
+    "number_of_replicas": 1,
+        "analysis": {
+        "normalizer":{
+        "minusculas":{
+        "type":{
+        "filter":[
+        "lowercase"
+        ]
+          }
+          }
+          }
+          },
+     "mappings": {
+            "properties":{
+                "@timestamp":{"type": "date"}, 
+                "estado_consulta":{"type": "text"}, 
+                "servicio":{"type": "text"}, 
+                "administrador":{"type": "text"},
+                "consultas_realizadas":{"type": "integer"}
+              }
+          }
+  }
+
+
+{
+  "query":{
+  "term": {"estado_consulta": "error" or "consumo" }
+}
+}
+
+GET log_consultas/count
+{
+  "query":{
+  "term": {"administrador": "Juan Lara" }
+}
+}
+
+GET log_consultas/count
+{
+  "query":{
+  "term": {"estado_consulta": "informativo" and "servicio": "borrado" }
+}
+}
+
+GET log_consultas/
+{
+  "query":{
+  "term": {"sum":{ "estado_consulta": "error" }
+}
+}
